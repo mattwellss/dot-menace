@@ -4,11 +4,9 @@ import "CoreLibs/sprites"
 
 local gfx <const> = playdate.graphics
 
-local playerSprite = nil
-local foodSprite = nil
+local foodCount = 5
 local winnerTextSprite = nil
 local momentumX, momentumY = 0, 0
-local momentumMax = 5
 
 -- `playdate.update()` is the heart of every Playdate game.
 -- This function is called right before every frame is drawn onscreen.
@@ -23,11 +21,11 @@ function playdate.update()
 
    gfx.sprite.update()
 
-   -- for i = 1, #collisions do
-   --    winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
-   --    winnerTextSprite:moveTo(200, 120)
-   --    winnerTextSprite:add()
-   -- end
+   if foodCount == 0 then
+      winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
+      winnerTextSprite:moveTo(200, 120)
+      winnerTextSprite:add()
+   end
 end
 
 function updateMomentum()
@@ -124,6 +122,7 @@ function MakePlayerSprite()
          --- @type _Sprite
          local other = collision.other
          other:remove()
+         foodCount = foodCount - 1
       end
 
    end
@@ -139,8 +138,10 @@ end
 
 
 function myGameSetUp()
-   playerSprite = MakePlayerSprite()
-   foodSprite = MakeFoodSprite()
+   MakePlayerSprite()
+   for i = 1, foodCount, 1 do
+      MakeFoodSprite()
+   end
 end
 
 myGameSetUp()
