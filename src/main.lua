@@ -99,27 +99,28 @@ function playdate.update()
    end
 end
 
+
+--- Create a sprite
+--- @param spriteImagePath string
+--- @param startX integer
+--- @param startY integer
+--- @return _Sprite
+function MakeSprite(spriteImagePath, startX, startY)
+   local spriteImage = gfx.image.new(spriteImagePath)
+   assert(spriteImage)
+
+   local sprite = gfx.sprite.new(spriteImage)
+   sprite:moveTo(startX, startY)
+   sprite:add() -- This is critical!
+   sprite:setCollideRect(0, 0, sprite:getSize())
+   return sprite
+end
+
 function myGameSetUp()
 
-   -- Set up the player sprite.
-   local playerImage = gfx.image.new("images/player")
-   assert( playerImage ) -- make sure the image was where we thought
-
-   playerSprite = gfx.sprite.new( playerImage )
-   playerSprite:moveTo( 200, 120 )
-   playerSprite:add() -- This is critical!
-   playerSprite:setCollideRect(0, 0, playerSprite:getSize())
-
-   local foodImage = gfx.image.new("images/food")
-   assert(foodImage)
-
-   foodSprite = gfx.sprite.new(foodImage)
-   foodSprite:moveTo(math.random(400), math.random(240))
-   foodSprite:add()
-   foodSprite:setCollideRect(0, 0, foodSprite:getSize())
+   playerSprite = MakeSprite("images/player", 200 ,120)
+   foodSprite = MakeSprite("images/food", math.random(400), math.random(240))
 end
 
 myGameSetUp()
-
-
 
