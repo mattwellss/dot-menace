@@ -1,7 +1,6 @@
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
-import "CoreLibs/timer"
 
 local gfx <const> = playdate.graphics
 
@@ -23,7 +22,6 @@ function playdate.update()
    -- average-complexity games, you will.)
 
    gfx.sprite.update()
-   playdate.timer.updateTimers()
 
    -- for i = 1, #collisions do
    --    winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
