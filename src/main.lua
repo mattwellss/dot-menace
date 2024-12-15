@@ -17,46 +17,7 @@ local momentumMax = 5
 function playdate.update()
    assert(playerSprite)
 
-   -- Poll the d-pad and move our player accordingly.
-   -- (There are multiple ways to read the d-pad; this is the simplest.)
-   -- Note that it is possible for more than one of these directions
-   -- to be pressed at once, if the user is pressing diagonally.
-   local isUpPressed = playdate.buttonIsPressed( playdate.kButtonUp )
-   local isRightPressed = playdate.buttonIsPressed( playdate.kButtonRight )
-   local isDownPressed = playdate.buttonIsPressed( playdate.kButtonDown )
-   local isLeftPressed = playdate.buttonIsPressed( playdate.kButtonLeft )
-
-   --- increase momentum up to a limit when buttons are pressed
-   if momentumY > -10 and isUpPressed then
-      momentumY = momentumY - 1
-   end
-   if momentumX < 10 and isRightPressed then
-      momentumX = momentumX + 1
-   end
-   if momentumY < 10 and isDownPressed then
-      momentumY = momentumY + 1
-   end
-   if momentumX > -10 and isLeftPressed then
-      momentumX = momentumX - 1
-   end
-
-   --- momentum decays to zero when an X/Y direction isn't pressed
-   if (not isUpPressed) and (not isDownPressed) then
-      if momentumY > 0 then
-         momentumY = momentumY - 1
-      end
-      if momentumY < 0 then
-         momentumY = momentumY + 1
-      end
-   end
-   if (not isLeftPressed) and (not isRightPressed) then
-      if momentumX > 0 then
-         momentumX = momentumX - 1
-      end
-      if momentumX < 0 then
-         momentumX = momentumX + 1
-      end
-   end
+   updateMomentum()
 
    local rotation = 0
    if playdate.isCrankDocked() == false then
@@ -96,6 +57,49 @@ function playdate.update()
       winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
       winnerTextSprite:moveTo(200, 120)
       winnerTextSprite:add()
+   end
+end
+
+function updateMomentum()
+      -- Poll the d-pad and move our player accordingly.
+   -- (There are multiple ways to read the d-pad; this is the simplest.)
+   -- Note that it is possible for more than one of these directions
+   -- to be pressed at once, if the user is pressing diagonally.
+   local isUpPressed = playdate.buttonIsPressed( playdate.kButtonUp )
+   local isRightPressed = playdate.buttonIsPressed( playdate.kButtonRight )
+   local isDownPressed = playdate.buttonIsPressed( playdate.kButtonDown )
+   local isLeftPressed = playdate.buttonIsPressed( playdate.kButtonLeft )
+
+   --- increase momentum up to a limit when buttons are pressed
+   if momentumY > -10 and isUpPressed then
+      momentumY = momentumY - 1
+   end
+   if momentumX < 10 and isRightPressed then
+      momentumX = momentumX + 1
+   end
+   if momentumY < 10 and isDownPressed then
+      momentumY = momentumY + 1
+   end
+   if momentumX > -10 and isLeftPressed then
+      momentumX = momentumX - 1
+   end
+
+   --- momentum decays to zero when an X/Y direction isn't pressed
+   if (not isUpPressed) and (not isDownPressed) then
+      if momentumY > 0 then
+         momentumY = momentumY - 1
+      end
+      if momentumY < 0 then
+         momentumY = momentumY + 1
+      end
+   end
+   if (not isLeftPressed) and (not isRightPressed) then
+      if momentumX > 0 then
+         momentumX = momentumX - 1
+      end
+      if momentumX < 0 then
+         momentumX = momentumX + 1
+      end
    end
 end
 
