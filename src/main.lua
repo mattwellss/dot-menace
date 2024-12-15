@@ -15,34 +15,8 @@ local momentumMax = 5
 -- This function is called right before every frame is drawn onscreen.
 -- Use this function to poll input, run game logic, and move sprites.
 function playdate.update()
-   assert(playerSprite)
-
    updateMomentum()
 
-   local rotation = 0
-   if playdate.isCrankDocked() == false then
-      rotation = playdate.getCrankPosition()
-   end
-   playerSprite:setRotation(rotation)
-   playerSprite:moveBy(momentumX, momentumY)
-
-   local posX, posY = playerSprite:getPosition()
-   if posX > 400 then
-      posX = posX - 400
-      playerSprite:moveTo(posX, posY)
-   end
-   if posX < 0 then
-      posX = posX + 400
-      playerSprite:moveTo(posX, posY)
-   end
-   if posY > 240 then
-      posY = posY - 240
-      playerSprite:moveTo(posX, posY)
-   end
-   if posY < 0 then
-      posY = posY + 240
-      playerSprite:moveTo(posX, posY)
-   end
 
    -- Call the functions below in playdate.update() to draw sprites and keep
    -- timers updated. (We aren't using timers in this example, but in most
@@ -51,17 +25,15 @@ function playdate.update()
    gfx.sprite.update()
    playdate.timer.updateTimers()
 
-   local collisions = gfx.sprite.allOverlappingSprites()
-
-   for i = 1, #collisions do
-      winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
-      winnerTextSprite:moveTo(200, 120)
-      winnerTextSprite:add()
-   end
+   -- for i = 1, #collisions do
+   --    winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
+   --    winnerTextSprite:moveTo(200, 120)
+   --    winnerTextSprite:add()
+   -- end
 end
 
 function updateMomentum()
-      -- Poll the d-pad and move our player accordingly.
+   -- Poll the d-pad and move our player accordingly.
    -- (There are multiple ways to read the d-pad; this is the simplest.)
    -- Note that it is possible for more than one of these directions
    -- to be pressed at once, if the user is pressing diagonally.
@@ -115,15 +87,62 @@ function MakeSprite(spriteImagePath, startX, startY)
 
    local sprite = gfx.sprite.new(spriteImage)
    sprite:moveTo(startX, startY)
-   sprite:add() -- This is critical!
    sprite:setCollideRect(0, 0, sprite:getSize())
    return sprite
 end
 
-function myGameSetUp()
+--- Create the player sprite
+--- @return _Sprite
+function MakePlayerSprite()
+   local player = MakeSprite("images/player", 200, 120)
+   -- handle movement
+   function player:update()
+      local rotation = 0
+      local playerX, playerY = self:getPosition()
+      if playdate.isCrankDocked() == false then
+         rotation = playdate.getCrankPosition()
+      end
+      player:setRotation(rotation)
+      local posX, posY, collisions = player:moveWithCollisions(playerX + momentumX, playerY+ momentumY)
 
-   playerSprite = MakeSprite("images/player", 200 ,120)
-   foodSprite = MakeSprite("images/food", math.random(400), math.random(240))
+      if posX > 400 then
+         posX = posX - 400
+         player:moveTo(posX, posY)
+      end
+      if posX < 0 then
+         posX = posX + 400
+         player:moveTo(posX, posY)
+      end
+      if posY > 240 then
+         posY = posY - 240
+         player:moveTo(posX, posY)
+      end
+      if posY < 0 then
+         posY = posY + 240
+         player:moveTo(posX, posY)
+      end
+
+      for i, collision in pairs(collisions) do
+         --- @type _Sprite
+         local other = collision.other
+         other:remove()
+      end
+
+   end
+   player:add()
+   return player
+end
+
+function MakeFoodSprite()
+   local food = MakeSprite("images/food", math.random(400), math.random(240))
+   food:add()
+   return food
+end
+
+
+function myGameSetUp()
+   playerSprite = MakePlayerSprite()
+   foodSprite = MakeFoodSprite()
 end
 
 myGameSetUp()
