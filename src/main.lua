@@ -22,6 +22,7 @@ function playdate.update()
    gfx.sprite.update()
 
    if foodCount == 0 then
+      foodCount = -1
       winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
       winnerTextSprite:moveTo(200, 120)
       winnerTextSprite:add()
