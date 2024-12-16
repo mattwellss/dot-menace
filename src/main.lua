@@ -7,6 +7,7 @@ local gfx <const> = playdate.graphics
 local foodCount = 5
 local winnerTextSprite = nil
 local momentumX, momentumY = 0, 0
+local isUpPressed, isRightPressed, isDownPressed, isLeftPressed = false, false, false, false
 
 -- `playdate.update()` is the heart of every Playdate game.
 -- This function is called right before every frame is drawn onscreen.
@@ -29,16 +30,16 @@ function playdate.update()
    end
 end
 
-function updateMomentum()
-   -- Poll the d-pad and move our player accordingly.
-   -- (There are multiple ways to read the d-pad; this is the simplest.)
-   -- Note that it is possible for more than one of these directions
-   -- to be pressed at once, if the user is pressing diagonally.
-   local isUpPressed = playdate.buttonIsPressed( playdate.kButtonUp )
-   local isRightPressed = playdate.buttonIsPressed( playdate.kButtonRight )
-   local isDownPressed = playdate.buttonIsPressed( playdate.kButtonDown )
-   local isLeftPressed = playdate.buttonIsPressed( playdate.kButtonLeft )
+function playdate.upButtonDown() isUpPressed = true end
+function playdate.upButtonUp() isUpPressed = false end
+function playdate.downButtonDown() isDownPressed = true end
+function playdate.downButtonUp() isDownPressed = false end
+function playdate.rightButtonDown() isRightPressed = true end
+function playdate.rightButtonUp() isRightPressed = false end
+function playdate.leftButtonDown() isLeftPressed = true end
+function playdate.leftButtonUp() isLeftPressed = false end
 
+function updateMomentum()
    --- increase momentum up to a limit when buttons are pressed
    if momentumY > -10 and isUpPressed then
       momentumY = momentumY - 1
