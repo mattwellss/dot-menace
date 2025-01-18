@@ -4,7 +4,30 @@ import "CoreLibs/sprites"
 local tagActive <const> = 1
 local tagRemoved <const> = 2
 
-local gfx <const> = playdate.graphics
+local pd <const> = playdate
+local gfx <const> = pd.graphics
+
+class("Food").extends(gfx.sprite)
+
+--- @class Food: _Sprite
+Food = Food or {}
+
+function Food:init()
+   Food.super.init(self)
+   self:setImage(assert(gfx.image.new("images/food")))
+   self:moveTo(math.random(400), math.random(240))
+   self:setCollideRect(0, 0, self:getSize())
+end
+
+function Food:add()
+   Food.super.add(self)
+   self:setTag(tagActive)
+end
+
+function Food:remove()
+   Food.super.remove(self)
+   self:setTag(tagRemoved)
+end
 
 --- Make a number of food sprites
 --- @param count integer
@@ -12,7 +35,7 @@ local gfx <const> = playdate.graphics
 function MakeFoodSprites(count)
    local food = {}
    for i = 1, count, 1 do
-      table.insert(food, MakeFoodSprite())
+      table.insert(food, Food())
    end
    function food:activeCount()
       local activeCount = 0
@@ -27,32 +50,3 @@ function MakeFoodSprites(count)
    return food
 end
 
---- Create a sprite
---- @param spriteImagePath string
---- @param startX integer
---- @param startY integer
---- @return _Sprite
-function MakeSprite(spriteImagePath, startX, startY)
-   local spriteImage = gfx.image.new(spriteImagePath)
-   assert(spriteImage)
-
-   local sprite = gfx.sprite.new(spriteImage)
-   sprite:moveTo(startX, startY)
-   sprite:setCollideRect(0, 0, sprite:getSize())
-   return sprite
-end
-
-function MakeFoodSprite()
-   local _food = MakeSprite("images/food", math.random(400), math.random(240))
-   function _food:remove()
-      gfx.sprite.remove(self)
-      self:setTag(tagRemoved)
-   end
-
-   function _food:add()
-      gfx.sprite.add(self)
-      _food:setTag(tagActive)
-   end
-
-   return _food
-end
