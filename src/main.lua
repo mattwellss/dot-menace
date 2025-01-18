@@ -28,7 +28,7 @@ end
 
 function myGameSetUp()
    Player():add()
-   food = MakeFoodSprites(5)
+   food = MakeSnacks(5)
    for i = 1, #food, 1 do
       food[i]:add()
    end

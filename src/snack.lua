@@ -7,46 +7,46 @@ local tagRemoved <const> = 2
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-class("Food").extends(gfx.sprite)
+class("Snack").extends(gfx.sprite)
 
---- @class Food: _Sprite
-Food = Food or {}
+--- @class Snack: _Sprite
+Snack = Snack or {}
 
-function Food:init()
-   Food.super.init(self)
-   self:setImage(assert(gfx.image.new("images/food")))
+function Snack:init()
+   Snack.super.init(self)
+   self:setImage(assert(gfx.image.new("images/snack")))
    self:moveTo(math.random(400), math.random(240))
    self:setCollideRect(0, 0, self:getSize())
 end
 
-function Food:add()
-   Food.super.add(self)
+function Snack:add()
+   Snack.super.add(self)
    self:setTag(tagActive)
 end
 
-function Food:remove()
-   Food.super.remove(self)
+function Snack:remove()
+   Snack.super.remove(self)
    self:setTag(tagRemoved)
 end
 
---- Make a number of food sprites
+--- Make a number of snack sprites
 --- @param count integer
 --- @return table
-function MakeFoodSprites(count)
-   local food = {}
+function MakeSnacks(count)
+   local snacks = {}
    for i = 1, count, 1 do
-      table.insert(food, Food())
+      table.insert(snacks, Snack())
    end
-   function food:activeCount()
+   function snacks:activeCount()
       local activeCount = 0
-      for i = 1, #food, 1 do
-         if food[i]:getTag() == tagActive then
+      for i = 1, #snacks, 1 do
+         if snacks[i]:getTag() == tagActive then
             activeCount = activeCount + 1
          end
       end
 
       return activeCount
    end
-   return food
+   return snacks
 end
 
