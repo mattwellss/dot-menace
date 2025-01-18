@@ -4,7 +4,7 @@ local pd <const> = playdate
 local gfx <const> = pd.graphics
 local momentumMax <const> = 10
 
-class("Player").extends(playdate.graphics.sprite)
+class("Player").extends(gfx.sprite)
 
 --- @class Player: _Sprite
 Player = Player or {}
