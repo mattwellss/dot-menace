@@ -2,18 +2,16 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 
+import "player"
 local gfx <const> = playdate.graphics
 
 local foodCount = 5
 local winnerTextSprite = nil
-local momentumX, momentumY = 0, 0
-local isUpPressed, isRightPressed, isDownPressed, isLeftPressed = false, false, false, false
 
 -- `playdate.update()` is the heart of every Playdate game.
 -- This function is called right before every frame is drawn onscreen.
 -- Use this function to poll input, run game logic, and move sprites.
 function playdate.update()
-   updateMomentum()
 
 
    -- Call the functions below in playdate.update() to draw sprites and keep
@@ -30,48 +28,6 @@ function playdate.update()
    end
 end
 
-function playdate.upButtonDown() isUpPressed = true end
-function playdate.upButtonUp() isUpPressed = false end
-function playdate.downButtonDown() isDownPressed = true end
-function playdate.downButtonUp() isDownPressed = false end
-function playdate.rightButtonDown() isRightPressed = true end
-function playdate.rightButtonUp() isRightPressed = false end
-function playdate.leftButtonDown() isLeftPressed = true end
-function playdate.leftButtonUp() isLeftPressed = false end
-
-function updateMomentum()
-   --- increase momentum up to a limit when buttons are pressed
-   if momentumY > -10 and isUpPressed then
-      momentumY = momentumY - 1
-   end
-   if momentumX < 10 and isRightPressed then
-      momentumX = momentumX + 1
-   end
-   if momentumY < 10 and isDownPressed then
-      momentumY = momentumY + 1
-   end
-   if momentumX > -10 and isLeftPressed then
-      momentumX = momentumX - 1
-   end
-
-   --- momentum decays to zero when an X/Y direction isn't pressed
-   if (not isUpPressed) and (not isDownPressed) then
-      if momentumY > 0 then
-         momentumY = momentumY - 1
-      end
-      if momentumY < 0 then
-         momentumY = momentumY + 1
-      end
-   end
-   if (not isLeftPressed) and (not isRightPressed) then
-      if momentumX > 0 then
-         momentumX = momentumX - 1
-      end
-      if momentumX < 0 then
-         momentumX = momentumX + 1
-      end
-   end
-end
 
 
 --- Create a sprite
@@ -89,48 +45,6 @@ function MakeSprite(spriteImagePath, startX, startY)
    return sprite
 end
 
---- Create the player sprite
---- @return _Sprite
-function MakePlayerSprite()
-   local player = MakeSprite("images/player", 200, 120)
-   -- handle movement
-   function player:update()
-      local rotation = 0
-      local playerX, playerY = self:getPosition()
-      if playdate.isCrankDocked() == false then
-         rotation = playdate.getCrankPosition()
-      end
-      player:setRotation(rotation)
-      local posX, posY, collisions = player:moveWithCollisions(playerX + momentumX, playerY+ momentumY)
-
-      if posX > 400 then
-         posX = posX - 400
-         player:moveTo(posX, posY)
-      end
-      if posX < 0 then
-         posX = posX + 400
-         player:moveTo(posX, posY)
-      end
-      if posY > 240 then
-         posY = posY - 240
-         player:moveTo(posX, posY)
-      end
-      if posY < 0 then
-         posY = posY + 240
-         player:moveTo(posX, posY)
-      end
-
-      for i, collision in pairs(collisions) do
-         --- @type _Sprite
-         local other = collision.other
-         other:remove()
-         foodCount = foodCount - 1
-      end
-
-   end
-   player:add()
-   return player
-end
 
 function MakeFoodSprite()
    local food = MakeSprite("images/food", math.random(400), math.random(240))
@@ -140,7 +54,7 @@ end
 
 
 function myGameSetUp()
-   MakePlayerSprite()
+   Player():add()
    for i = 1, foodCount, 1 do
       MakeFoodSprite()
    end
