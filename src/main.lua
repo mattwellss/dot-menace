@@ -7,32 +7,54 @@ import "snack"
 
 local gfx <const> = playdate.graphics
 
-local winnerTextSprite = nil
-local food
-local hasWon = false
+function UpdateFn() end
 
 function playdate.update()
    gfx.sprite.update()
-
-   if food:activeCount() == 0 then
-      hasWon = true
-   end
-   if hasWon then
-      hasWon = false
-      winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
-      winnerTextSprite:moveTo(200, 120)
-      winnerTextSprite:add()
-   end
+   UpdateFn()
 end
 
 
-function myGameSetUp()
+function GameSetup()
+   local food = {}
+   local hasWon = false
+
    Player():add()
    food = MakeSnacks(5)
    for i = 1, #food, 1 do
       food[i]:add()
    end
+
+   UpdateFn = function ()
+      if food:activeCount() == 0 then
+         hasWon = true
+      end
+      if hasWon then
+         hasWon = false
+         local winnerTextSprite = gfx.sprite.spriteWithText("You win!", 100, 50)
+         winnerTextSprite:moveTo(200, 120)
+         winnerTextSprite:add()
+      end
+
+   end
 end
 
-myGameSetUp()
+function SplashSetup ()
+   local splashSprite = gfx.sprite.new(gfx.image.new(assert("images/card")))
+   splashSprite:moveTo(200, 80)
+   splashSprite:add()
+
+   local pressASprite = gfx.sprite.spriteWithText("Press A!!!", 100, 50)
+   pressASprite:moveTo(200, 170)
+   pressASprite:add()
+
+   UpdateFn = function ()
+      if playdate.buttonIsPressed(playdate.kButtonA) then
+         gfx.sprite.removeAll()
+         GameSetup()
+      end
+   end
+end
+
+SplashSetup()
 
