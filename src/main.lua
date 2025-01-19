@@ -3,7 +3,7 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 
 import "player"
-import "food"
+import "snack"
 
 local gfx <const> = playdate.graphics
 
