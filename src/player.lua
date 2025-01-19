@@ -16,7 +16,7 @@ Player.yDirection = 0
 
 function Player:init()
    Player.super.init(self)
-   self:setImage(assert(gfx.image.new("images/player")))
+   self:setImage(assert(gfx.image.new("images/pointer")))
    self:moveTo(200, 120)
    self:setCollideRect(0, 0, self:getSize())
    --- @type _InputHandler
@@ -44,6 +44,10 @@ function Player:init()
       end,
       leftButtonUp = function ()
          self.xDirection = 0
+      end,
+      cranked = function (change, acceleratedChange)
+         local currentRotation = self:getRotation()
+         self:setRotation(currentRotation + change)
       end
    }
    pd.inputHandlers.push(inputHandler, true)
