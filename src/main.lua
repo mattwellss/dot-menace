@@ -56,5 +56,18 @@ function SplashSetup ()
    end
 end
 
-SplashSetup()
+function Init ()
+   local menu = playdate.getSystemMenu()
+   menu:addMenuItem(
+      "Restart",
+      function ()
+         gfx.sprite.removeAll()
+         SplashSetup()
+      end
+   )
+   SplashSetup()
+end
+
+
+Init()
 
